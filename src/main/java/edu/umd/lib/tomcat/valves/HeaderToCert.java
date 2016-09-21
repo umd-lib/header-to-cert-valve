@@ -21,23 +21,39 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
- *
+ * Apache Tomcat Valve that checks for the presence of a PEM-formatted X.509 certificate in an HTTP request header. If
+ * it finds and successfully parses such a certificate, it adds the certificate to the request's lists of client
+ * certificates.
+ * 
+ * The default HTTP header to check is "ssl-client-cert". This can be changed by setting the "headerName" on the Valve
+ * element configuration in the webapps context.xml.
+ * 
  * @author peichman
  */
-
 public class HeaderToCert extends ValveBase implements Lifecycle {
+  public static final String DEFAULT_HEADER_NAME = "ssl-client-cert";
 
   protected static final String info = "edu.umd.lib.tomcat.valves.HeaderToCert/1.0.0";
 
   private static final Log log = LogFactory.getLog(HeaderToCert.class);
 
+  private String headerName;
+
+  public HeaderToCert() {
+    super(true);
+    headerName = DEFAULT_HEADER_NAME;
+  }
+
+  public void setHeaderName(String headerName) {
+    log.debug("Setting header name to " + headerName);
+    this.headerName = headerName;
+  }
+
   @Override
   public void invoke(Request request, Response response) throws IOException, ServletException {
 
-    String certHeader = "ssl_client_cert";
-
     HttpServletRequest httpRequest = request.getRequest();
-    String pemCert = httpRequest.getHeader(certHeader);
+    String pemCert = httpRequest.getHeader(headerName);
     if (pemCert != null && !pemCert.isEmpty() && !pemCert.equals("(null)")) {
       pemCert = pemCert.replaceAll(" ", "\n").replaceAll("\nCERTIFICATE", " CERTIFICATE");
       log.info("Client cert:\n" + pemCert);
@@ -66,11 +82,11 @@ public class HeaderToCert extends ValveBase implements Lifecycle {
 
         } catch (CertificateException e) {
           e.printStackTrace();
-          log.error("Unable to parse value of " + certHeader + " as an X.509 certificate");
+          log.error("Unable to parse value of header " + headerName + " as an X.509 certificate");
         }
       }
     } else {
-      log.info("No client cert found in " + certHeader);
+      log.info("No client cert found in header " + headerName);
     }
 
     getNext().invoke(request, response);
