@@ -76,6 +76,10 @@ public class HeaderToCert extends ValveBase implements Lifecycle {
       if (cf != null) {
         try {
           X509Certificate cert = (X509Certificate) cf.generateCertificate(in);
+          String subjectDN = cert.getSubjectX500Principal().getName();
+          log.info("Certificate subject DN is " + subjectDN);
+          String issuerDN = cert.getIssuerX500Principal().getName();
+          log.info("Certificate issuer DN is " + issuerDN);
           X509Certificate[] certs = (X509Certificate[]) request.getAttribute(Globals.CERTIFICATES_ATTR);
           if (certs == null) {
             request.setAttribute(Globals.CERTIFICATES_ATTR, new X509Certificate[] { cert });
