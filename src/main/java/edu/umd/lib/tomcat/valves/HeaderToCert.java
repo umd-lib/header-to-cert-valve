@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.Globals;
 import org.apache.catalina.Lifecycle;
+import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
@@ -39,6 +40,8 @@ public class HeaderToCert extends ValveBase implements Lifecycle {
 
   private String headerName;
 
+  private CertificateFactory cf;
+
   public HeaderToCert() {
     super(true);
     headerName = DEFAULT_HEADER_NAME;
@@ -47,6 +50,16 @@ public class HeaderToCert extends ValveBase implements Lifecycle {
   public void setHeaderName(String headerName) {
     log.debug("Setting header name to " + headerName);
     this.headerName = headerName;
+  }
+
+  @Override
+  public void initInternal() throws LifecycleException {
+    try {
+      cf = CertificateFactory.getInstance("X.509");
+    } catch (CertificateException e) {
+      e.printStackTrace();
+      log.error("Unable to initialize X.509 certificate factory");
+    }
   }
 
   @Override
@@ -59,16 +72,8 @@ public class HeaderToCert extends ValveBase implements Lifecycle {
       log.info("Client cert:\n" + pemCert);
 
       ByteArrayInputStream in = new ByteArrayInputStream(pemCert.getBytes());
-      CertificateFactory cf = null;
-      try {
-        cf = CertificateFactory.getInstance("X.509");
-      } catch (CertificateException e) {
-        e.printStackTrace();
-        log.error("Unable to initialize X.509 certificate factory");
-      }
 
       if (cf != null) {
-
         try {
           X509Certificate cert = (X509Certificate) cf.generateCertificate(in);
           X509Certificate[] certs = (X509Certificate[]) request.getAttribute(Globals.CERTIFICATES_ATTR);
