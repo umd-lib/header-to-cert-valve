@@ -22,12 +22,23 @@ import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 
 /**
+ * <p>
  * Apache Tomcat Valve that checks for the presence of a PEM-formatted X.509 certificate in an HTTP request header. If
- * it finds and successfully parses such a certificate, it adds the certificate to the request's lists of client
+ * it finds and successfully parses such a certificate, it adds the certificate to the request's list of client
  * certificates.
  * 
- * The default HTTP header to check is "ssl-client-cert". This can be changed by setting the "headerName" on the Valve
- * element configuration in the webapps context.xml.
+ * <p>
+ * The default HTTP header to check is <b>ssl-client-cert</b>. This can be changed by setting the
+ * <code>headerName</code> attribute on the <code>Valve</code> element configuration in your web application's
+ * <i>context.xml</i>.
+ * 
+ * <p>
+ * Example <i>context.xml</i> config:
+ * 
+ * <pre>
+ * &lt;Valve className="edu.umd.lib.tomcat.valves.HeaderToCert"
+ *        headerName="my-header-name"/&gt;
+ * </pre>
  * 
  * @author peichman
  */
