@@ -4,8 +4,10 @@ Parses a certificate in an HTTP request header and adds it to the request certif
 
 ## Usage
 
+Add the HeaderToCert valve prior to the other valves (e.g. SSL Authentication value) that needs the certificate to be present on the request.
+
 ```xml
-<Valve className="edu.umd.lib.tomcat.valves"
+<Valve className="edu.umd.lib.tomcat.valves.HeaderToCert"
   headerName="ssl-client-cert"/>
 ```
 
