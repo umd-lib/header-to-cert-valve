@@ -16,6 +16,14 @@ The default header name is `ssl-client-cert`. The certificate must be in PEM for
 The main use case of this valve is when Tomcat is running behind a reverse proxy server such as Apache. To configure Apache to pass the certificate to Tomcat via an HTTP request header, add the following to your Apache configuration:
 
 ```apacheconf
+# turn on optional client certificate authentication
+SSLVerifyClient optional
+
+# set the path to your local CA certificate
+# if a certificate is present in the request,
+# it must be signed by this CA
+SSLCACertificateFile /path/to/local/ca.crt
+    
 # initialize the SSL-Client-Cert header to a blank value
 # to avoid HTTP header forgeries
 RequestHeader set SSL-Client-Cert ""
