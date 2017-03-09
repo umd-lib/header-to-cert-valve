@@ -33,3 +33,8 @@ RequestHeader set SSL-Client-Cert ""
 # pass the client cert to the web application
 RequestHeader set SSL-Client-Cert "%{SSL_CLIENT_CERT}s"
 ```
+
+## License
+
+See the [LICENSE](LICENSE.md) file for license rights and limitations (Apache 2.0).
+

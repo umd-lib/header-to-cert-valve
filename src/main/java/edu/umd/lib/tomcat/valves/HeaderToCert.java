@@ -80,7 +80,7 @@ public class HeaderToCert extends ValveBase implements Lifecycle {
     String pemCert = httpRequest.getHeader(headerName);
     if (pemCert != null && !pemCert.isEmpty() && !pemCert.equals("(null)")) {
       pemCert = pemCert.replaceAll(" ", "\n").replaceAll("\nCERTIFICATE", " CERTIFICATE");
-      log.info("Client cert:\n" + pemCert);
+      log.debug("Client cert:\n" + pemCert);
 
       ByteArrayInputStream in = new ByteArrayInputStream(pemCert.getBytes());
 
